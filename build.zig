@@ -263,6 +263,7 @@ pub fn build(b: *std.Build) !void {
 
         if (target.result.os.tag == .windows) {
             exe.subsystem = .Windows;
+            exe.addIncludePath(.{ .path = "dist/windows/inc" });
             exe.addWin32ResourceFile(.{
                 .file = .{ .path = "dist/windows/ghostty.rc" },
             });
@@ -1167,6 +1168,8 @@ fn addDeps(
                 step.linkSystemLibrary2("gtk4", dynamic_link_opts);
                 if (config.libadwaita) step.linkSystemLibrary2("adwaita-1", dynamic_link_opts);
             },
+
+            .windows => { },
         }
     }
 

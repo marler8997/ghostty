@@ -15,6 +15,7 @@ const build_config = @import("build_config.zig");
 pub usingnamespace @import("apprt/structs.zig");
 pub const glfw = @import("apprt/glfw.zig");
 pub const gtk = @import("apprt/gtk.zig");
+pub const windows = @import("apprt/windows.zig");
 pub const none = @import("apprt/none.zig");
 pub const browser = @import("apprt/browser.zig");
 pub const embedded = @import("apprt/embedded.zig");
@@ -29,6 +30,7 @@ pub const runtime = switch (build_config.artifact) {
         .none => none,
         .glfw => glfw,
         .gtk => gtk,
+        .windows => windows,
     },
     .lib => embedded,
     .wasm_module => browser,
@@ -53,11 +55,13 @@ pub const Runtime = enum {
     /// GTK-backed. Rich windowed application. GTK is dynamically linked.
     gtk,
 
+    /// The native Windows backend.
+    windows,
+
     pub fn default(target: std.Target) Runtime {
         // The Linux default is GTK because it is full featured.
         if (target.os.tag == .linux) return .gtk;
 
-        // Windows we currently only support glfw
         if (target.os.tag == .windows) return .glfw;
 
         // Otherwise, we do NONE so we don't create an exe. The GLFW
