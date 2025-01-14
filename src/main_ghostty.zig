@@ -23,6 +23,11 @@ const App = @import("App.zig");
 const Ghostty = @import("main_c.zig").Ghostty;
 const state = &@import("global.zig").state;
 
+pub const panic = if (@hasDecl(apprt.runtime, "panic"))
+    apprt.runtime.panic
+else
+    std.builtin.default_panic;
+
 /// The return type for main() depends on the build artifact. The lib build
 /// also calls "main" in order to run the CLI actions, but it calls it as
 /// an API and not an entrypoint.

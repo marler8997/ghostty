@@ -28,3 +28,9 @@ else
 test {
     _ = entrypoint;
 }
+
+/// Overrides the panic handler.
+pub const panic = if (@hasDecl(entrypoint, "panic"))
+    entrypoint.panic
+else
+    std.builtin.default_panic;

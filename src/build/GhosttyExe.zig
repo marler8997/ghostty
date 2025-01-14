@@ -43,8 +43,11 @@ pub fn init(b: *std.Build, cfg: *const Config, deps: *const SharedDeps) !Ghostty
     switch (cfg.target.result.os.tag) {
         .windows => {
             exe.subsystem = .Windows;
+            const resource_inc = b.path("dist/windows/inc");
+            exe.addIncludePath(resource_inc);
             exe.addWin32ResourceFile(.{
                 .file = b.path("dist/windows/ghostty.rc"),
+                .include_paths = &.{resource_inc},
             });
         },
 

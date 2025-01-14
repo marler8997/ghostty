@@ -16,6 +16,7 @@ const cursor = @import("renderer/cursor.zig");
 const message = @import("renderer/message.zig");
 const size = @import("renderer/size.zig");
 pub const shadertoy = @import("renderer/shadertoy.zig");
+pub const DirectX = @import("renderer/DirectX.zig");
 pub const Metal = @import("renderer/Metal.zig");
 pub const OpenGL = @import("renderer/OpenGL.zig");
 pub const WebGL = @import("renderer/WebGL.zig");
@@ -37,6 +38,7 @@ pub const Impl = enum {
     opengl,
     metal,
     webgl,
+    directx,
 
     pub fn default(
         target: std.Target,
@@ -49,6 +51,7 @@ pub const Impl = enum {
         }
 
         if (target.isDarwin()) return .metal;
+        if (target.os.tag == .windows) return .directx;
         return .opengl;
     }
 };
@@ -59,6 +62,7 @@ pub const Renderer = switch (build_config.renderer) {
     .metal => Metal,
     .opengl => OpenGL,
     .webgl => WebGL,
+    .directx => DirectX,
 };
 
 /// The health status of a renderer. These must be shared across all

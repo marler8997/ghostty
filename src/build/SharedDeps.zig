@@ -328,10 +328,15 @@ pub fn add(
     }
 
     // Other dependencies, mostly pure Zig
-    step.root_module.addImport("opengl", b.dependency(
-        "opengl",
-        .{},
-    ).module("opengl"));
+    switch (self.config.app_runtime) {
+        .none, .glfw, .gtk => {
+            step.root_module.addImport("opengl", b.dependency(
+                "opengl",
+                .{},
+            ).module("opengl"));
+        },
+        .win32 => {},
+    }
     step.root_module.addImport("vaxis", b.dependency("vaxis", .{
         .target = target,
         .optimize = optimize,
@@ -407,12 +412,17 @@ pub fn add(
 
     // If we're building an exe then we have additional dependencies.
     if (step.kind != .lib) {
-        // We always statically compile glad
-        step.addIncludePath(b.path("vendor/glad/include/"));
-        step.addCSourceFile(.{
-            .file = b.path("vendor/glad/src/gl.c"),
-            .flags = &.{},
-        });
+        // We always statically compile glad for non directx runtimes
+        switch (self.config.renderer) {
+            .opengl, .metal, .webgl => {
+                step.addIncludePath(b.path("vendor/glad/include/"));
+                step.addCSourceFile(.{
+                    .file = b.path("vendor/glad/src/gl.c"),
+                    .flags = &.{},
+                });
+            },
+            .directx => {},
+        }
 
         // When we're targeting flatpak we ALWAYS link GTK so we
         // get access to glib for dbus.
@@ -489,6 +499,10 @@ pub fn add(
                     generate_resources_h.extra_file_dependencies = &gresource.dependencies;
                     step.addIncludePath(ghostty_resources_h.dirname());
                 }
+            },
+
+            .win32 => if (b.lazyDependency("win32", .{})) |win32_dep| {
+                step.root_module.addImport("win32", win32_dep.module("zigwin32"));
             },
         }
     }
