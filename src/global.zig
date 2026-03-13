@@ -130,13 +130,15 @@ pub const GlobalState = struct {
         std.log.info("ghostty build optimize={s}", .{build_config.mode_string});
         std.log.info("runtime={}", .{build_config.app_runtime});
         std.log.info("font_backend={}", .{build_config.font_backend});
-        if (comptime build_config.font_backend.hasHarfbuzz()) {
-            std.log.info("dependency harfbuzz={s}", .{harfbuzz.versionString()});
+        if (comptime build_config.app_runtime != .native) {
+            if (comptime build_config.font_backend.hasHarfbuzz()) {
+                std.log.info("dependency harfbuzz={s}", .{harfbuzz.versionString()});
+            }
+            if (comptime build_config.font_backend.hasFontconfig()) {
+                std.log.info("dependency fontconfig={d}", .{fontconfig.version()});
+            }
+            std.log.info("renderer={}", .{renderer.Renderer});
         }
-        if (comptime build_config.font_backend.hasFontconfig()) {
-            std.log.info("dependency fontconfig={d}", .{fontconfig.version()});
-        }
-        std.log.info("renderer={}", .{renderer.Renderer});
         std.log.info("libxev default backend={t}", .{xev.backend});
 
         // As early as possible, initialize our resource limits.
@@ -163,11 +165,13 @@ pub const GlobalState = struct {
         // affects a lot of behaviors in a shell.
         try internal_os.ensureLocale(self.alloc);
 
-        // Initialize glslang for shader compilation
-        try glslang.init();
+        if (comptime build_config.app_runtime != .native) {
+            // Initialize glslang for shader compilation
+            try glslang.init();
 
-        // Initialize oniguruma for regex
-        try oni.init(&.{oni.Encoding.utf8});
+            // Initialize oniguruma for regex
+            try oni.init(&.{oni.Encoding.utf8});
+        }
 
         // Find our resources directory once for the app so every launch
         // hereafter can use this cached value.

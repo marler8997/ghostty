@@ -11,6 +11,10 @@ pub const Runtime = enum {
     /// approach to building the application.
     gtk,
 
+    /// Native runtime with X11 and Wayland backends.
+    /// No GTK or other toolkit dependency.
+    native,
+
     pub fn default(target: std.Target) Runtime {
         return switch (target.os.tag) {
             // The Linux and FreeBSD default is GTK because it is a full

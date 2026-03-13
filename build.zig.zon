@@ -42,6 +42,10 @@
             .url = "https://deps.files.ghostty.org/uucode-0.2.0-ZZjBPqZVVABQepOqZHR7vV_NcaN-wats0IB6o-Exj6m9.tar.gz",
             .hash = "uucode-0.2.0-ZZjBPqZVVABQepOqZHR7vV_NcaN-wats0IB6o-Exj6m9",
         },
+        .zigx = .{
+            .url = "git+https://github.com/marler8997/zigx#f2cb1c80caec39492c8ccc545b6d064ce53a4588",
+            .hash = "x11-0.0.0-yWuw5rH5DACB-oMvLop1YUtsroOXUTvGVAWmn7Fb-w41",
+        },
         .zig_wayland = .{
             // codeberg ifreund/zig-wayland
             .url = "https://deps.files.ghostty.org/zig_wayland-1b5c038ec10da20ed3a15b0b2a6db1c21383e8ea.tar.gz",

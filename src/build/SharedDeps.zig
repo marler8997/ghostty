@@ -544,6 +544,7 @@ pub fn add(
         switch (self.config.app_runtime) {
             .none => {},
             .gtk => try self.addGtkNg(step),
+            .native => self.addNative(step),
         }
     }
 
@@ -552,6 +553,13 @@ pub fn add(
     self.framedata.addImport(step);
 
     return static_libs;
+}
+
+/// Setup the dependencies for the native apprt build (zigx).
+fn addNative(self: *const SharedDeps, step: *std.Build.Step.Compile) void {
+    _ = self;
+    const b = step.step.owner;
+    step.root_module.addImport("x11", b.dependency("zigx", .{}).module("x11"));
 }
 
 /// Setup the dependencies for the GTK apprt build.
